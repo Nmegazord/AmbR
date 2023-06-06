@@ -38,7 +38,7 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
       drop = 1
     ),
     file_list,
-    c
+    cbind
   ))
 
 
