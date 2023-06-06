@@ -17,7 +17,7 @@
 import_ambr_audit_data <- function(path, schema = FALSE) {
   message("Generating a list of files...")
   file_list <- list.files(
-    path = path,
+    path = normalizePath(path),
     pattern = "*cv.csv",
     full.names = TRUE,
     recursive = TRUE
@@ -52,13 +52,13 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
 
   message("Extracting culture station and vessel number...")
   df <- df |>
-    dplyr::mutate(culture_station = as.factor(
-      stringr::str_extract(.data$V2, pattern = "(?<=^AuditData/CS[1234]/)CS[1234](?=_[[:digit:]]{1,2}_cv.csv$)")
-    ),
-    vessel_number = as.factor(as.numeric(
-      stringr::str_extract(.data$V2, pattern = "(?<=^AuditData/CS[1234]/CS[1234]_)[[:digit:]]{1,2}(?=_cv.csv$)")
-    ))) |>
+    dplyr::mutate(
+      culture_station = as.factor(stringr::str_extract(.data$V2, "(?<=AuditData/)(CS[0-9])(?=/)")),
+      vessel_number = as.factor(stringr::str_extract(.data$V2, "(?<=AuditData/CS[0-9]/CS[0-9]_)[0-9]{1,2}"))
+    ) |>
     dplyr::select(-.data$V2)
+
+
 
   message("Cleaning data...")
   df <- df |>
@@ -76,11 +76,11 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
   message("Calculating time from inoculated...")
 
   # Create a lookup table (or dictionary) of inoculation times
-  inoculation_times <- df |>
-    dplyr::filter(.data$parameter == "inoculated") |>
-    dplyr::select(.data$vessel_id, .data$value) |>
-    dplyr::rename(time_of_inoculum = .data$value) |>
-    tibble::deframe()  # convert to a named vector
+  when_inoculated <- df |>
+    dplyr::filter(.data$parameter == "inoculated")  |>
+    dplyr::select(.data$value, .data$vessel_id) |>
+    dplyr::rename(time_of_inoculum = .data$value)
+
 
   # Use the lookup table to calculate the time from inoculation
   df <- df |>
