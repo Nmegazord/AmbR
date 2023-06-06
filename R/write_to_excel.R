@@ -5,6 +5,7 @@
 #' @param file_name The name of the Excel file to be written
 #' @return No return value, but an Excel file is written as a side effect
 #' @examples
+#' @export
 #' write_to_excel(list(df1, df2), "my_excel_file.xlsx")
 #'
 write_to_excel <- function(df, file_name) {
