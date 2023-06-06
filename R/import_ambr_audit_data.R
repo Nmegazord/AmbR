@@ -12,7 +12,7 @@
 
 #' @importFrom rlang .data
 #' @export
-import_ambr_audit_data <- function(path = utils::choose.dir(), schema = FALSE) {
+import_ambr_audit_data <- function(path, schema = FALSE) {
   # Generates a list of files within the AuditData folder that end in "cv.csv"
   file_list <- list.files(
     path = path,
@@ -39,12 +39,12 @@ import_ambr_audit_data <- function(path = utils::choose.dir(), schema = FALSE) {
     cbind
   ))
 
-  # Check if required columns exist in the imported data
-  required_columns <- c("V2", "Name", "value", "date_time")
-  if (!all(required_columns %in% colnames(df))) {
-    missing_columns <- required_columns[!required_columns %in% colnames(df)]
-    stop(paste0("Required column(s) not found in imported data: ", paste(missing_columns, collapse = ", ")))
-  }
+  # # Check if required columns exist in the imported data
+  # required_columns <- c("V2", "Name", "value", "date_time")
+  # if (!all(required_columns %in% colnames(df))) {
+  #   missing_columns <- required_columns[!required_columns %in% colnames(df)]
+  #   stop(paste0("Required column(s) not found in imported data: ", paste(missing_columns, collapse = ", ")))
+  # }
 
   # Dropping the vessels that were not inoculated
   df <- df |>

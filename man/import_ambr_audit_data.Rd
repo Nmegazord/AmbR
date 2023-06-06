@@ -4,7 +4,7 @@
 \alias{import_ambr_audit_data}
 \title{Import Ambr audit data}
 \usage{
-import_ambr_audit_data(path = utils::choose.dir(), schema = FALSE)
+import_ambr_audit_data(path, schema = FALSE)
 }
 \arguments{
 \item{path}{The directory path from which to import the CSV files}
