@@ -80,7 +80,7 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
     dplyr::filter(.data$parameter == "inoculated") |>
     dplyr::select(.data$vessel_id, .data$value) |>
     dplyr::rename(time_of_inoculum = .data$value) |>
-    dplyr::deframe()  # convert to a named vector
+    tibble::deframe()  # convert to a named vector
 
   # Use the lookup table to calculate the time from inoculation
   df <- df |>
