@@ -7,7 +7,9 @@
 #' @export
 #' @examples
 #' # Example usage
+#' \dontrun{
 #' import_ambr_audit_data(utils::choose.dir(), schema = FALSE)
+#' }
 #'
 
 #' @importFrom rlang .data
@@ -36,8 +38,9 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
       drop = 1
     ),
     file_list,
-    cbind
+    c
   ))
+
 
   # # Check if required columns exist in the imported data
   # required_columns <- c("V2", "Name", "value", "date_time")
@@ -95,7 +98,7 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
 
   # adds schema if available
   if (schema) {
-    schema <- data.table::fread(.data$schema) |>
+    schema <- data.table::fread(schema) |>
       dplyr::mutate(
         vessel_number = as.numeric(.data$vessel_number),
         vessel_number = as.factor(.data$vessel_number),

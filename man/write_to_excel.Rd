@@ -18,6 +18,8 @@ No return value, but an Excel file is written as a side effect
 This function takes a list of dataframes and writes each dataframe to a separate worksheet in an Excel file
 }
 \examples{
+\dontrun{
 write_to_excel(list(df1, df2), "my_excel_file.xlsx")
+}
 
 }

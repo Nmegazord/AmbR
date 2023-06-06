@@ -3,5 +3,6 @@
 export(append_map)
 export(import_ambr_audit_data)
 export(import_transfection_time)
+export(write_to_excel)
 importFrom(dplyr,left_join)
 importFrom(rlang,.data)
