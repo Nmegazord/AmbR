@@ -84,12 +84,14 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
 
   # Use the lookup table to calculate the time from inoculation
   df <- df |>
+    dplyr::left_join(when_inoculated, by = c("vessel_id")) |>
     dplyr::mutate(
-      time_of_inoculum = lubridate::dmy_hms(inoculation_times[.data$vessel_id]),
+      time_of_inoculum = lubridate::dmy_hms(.data$time_of_inoculum),
       time_from_inoculation = difftime(.data$date_time, .data$time_of_inoculum, units = "hours"),
       time_from_inoculation = as.numeric(.data$time_from_inoculation)
     ) |>
     dplyr::select(-.data$time_of_inoculum)
+
 
   if (schema) {
     message("Adding schema...")
