@@ -74,15 +74,19 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
   df <- append_map(df, append_by = c("culture_station", "vessel_number"))
 
   message("Calculating time from inoculated...")
-  when_inoculated <- df |>
-    dplyr::filter(.data$parameter == "inoculated") |>
-    dplyr::select(.data$value, .data$vessel_id) |>
-    dplyr::rename(time_of_inoculum = .data$value)
 
+  # Create a lookup table (or dictionary) of inoculation times
+  inoculation_times <- df |>
+    dplyr::filter(.data$parameter == "inoculated") |>
+    dplyr::select(.data$vessel_id, .data$value) |>
+    dplyr::rename(time_of_inoculum = .data$value) |>
+    dplyr::deframe()  # convert to a named vector
+
+  # Use the lookup table to calculate the time from inoculation
   df <- df |>
-    dplyr::left_join(when_inoculated, by = c("vessel_id")) |>
     dplyr::mutate(
-      time_from_inoculation = difftime(.data$date_time, lubridate::dmy_hms(.data$time_of_inoculum), units = "hours"),
+      time_of_inoculum = lubridate::dmy_hms(inoculation_times[.data$vessel_id]),
+      time_from_inoculation = difftime(.data$date_time, .data$time_of_inoculum, units = "hours"),
       time_from_inoculation = as.numeric(.data$time_from_inoculation)
     ) |>
     dplyr::select(-.data$time_of_inoculum)
