@@ -15,7 +15,7 @@
 #' @importFrom rlang .data
 #' @export
 import_ambr_audit_data <- function(path, schema = FALSE) {
-  # Generates a list of files within the AuditData folder that end in "cv.csv"
+  message("Generating a list of files...")
   file_list <- list.files(
     path = path,
     pattern = "*cv.csv",
@@ -28,7 +28,7 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
     return(NULL)
   }
 
-  # Imports the files
+  message("Importing files...")
   df <- dplyr::bind_rows(purrr::map2(
     purrr::map(
       file_list,
@@ -41,25 +41,16 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
     cbind
   ))
 
-
-  # # Check if required columns exist in the imported data
-  # required_columns <- c("V2", "Name", "value", "date_time")
-  # if (!all(required_columns %in% colnames(df))) {
-  #   missing_columns <- required_columns[!required_columns %in% colnames(df)]
-  #   stop(paste0("Required column(s) not found in imported data: ", paste(missing_columns, collapse = ", ")))
-  # }
-
-  # Dropping the vessels that were not inoculated
+  message("Filtering data...")
   df <- df |>
     dplyr::filter(.data$V2 %in% dplyr::pull(dplyr::select(dplyr::filter(
       df, .data$Name == "INOCULATED"
     ), .data$V2)))
 
-  # gets rid of all date_something rows (redundant)
   df <- df |>
     dplyr::filter(!grepl("DATE", .data$Name))
 
-  # Extracting the culture station and vessel number from the filename
+  message("Extracting culture station and vessel number...")
   df <- df |>
     dplyr::mutate(culture_station = as.factor(
       stringr::str_extract(.data$V2, pattern = "(?<=^AuditData/CS[1234]/)CS[1234](?=_[[:digit:]]{1,2}_cv.csv$)")
@@ -69,7 +60,7 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
     ))) |>
     dplyr::select(-.data$V2)
 
-  # Clean rename and factor data
+  message("Cleaning data...")
   df <- df |>
     janitor::clean_names() |>
     dplyr::rename(parameter = .data$name) |>
@@ -79,10 +70,10 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
       date_time = lubridate::dmy_hms(.data$date_time)
     )
 
-  # Imports map and stitches it to the dataframe
+  message("Appending map...")
   df <- append_map(df, append_by = c("culture_station", "vessel_number"))
 
-  # Calculates time_from_inoculated
+  message("Calculating time from inoculated...")
   when_inoculated <- df |>
     dplyr::filter(.data$parameter == "inoculated") |>
     dplyr::select(.data$value, .data$vessel_id) |>
@@ -96,8 +87,8 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
     ) |>
     dplyr::select(-.data$time_of_inoculum)
 
-  # adds schema if available
   if (schema) {
+    message("Adding schema...")
     schema <- data.table::fread(schema) |>
       dplyr::mutate(
         vessel_number = as.numeric(.data$vessel_number),
@@ -114,13 +105,14 @@ import_ambr_audit_data <- function(path, schema = FALSE) {
       )
   }
 
-  # split the data frame by 'parameter' and attempt to guess each value format
+  message("Splitting the data frame...")
   df_split <- split(df, df$parameter) |>
     purrr::map(\(x) x |> dplyr::mutate(value = readr::parse_guess(.data$value)))
 
-  # the date data have a non-standard format and need special handling
   df_split$inoculated <- df_split$inoculated |>
     dplyr::mutate(value = lubridate::dmy_hms(.data$value))
+
+  message("Data import complete.")
 
   return(df_split)
 }
