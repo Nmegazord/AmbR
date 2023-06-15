@@ -4,12 +4,14 @@
 \alias{import_ambr_audit_data}
 \title{Import Ambr audit data}
 \usage{
-import_ambr_audit_data(path, schema = FALSE)
+import_ambr_audit_data(path, schema = FALSE, discard_non_inoculated = TRUE)
 }
 \arguments{
 \item{path}{The directory path from which to import the CSV files}
 
 \item{schema}{An optional parameter to specify a schema to be applied to the data}
+
+\item{discard_non_inoculated}{A parameter that defaults as TRUE to discard the vessel data if vessel was not inoculated}
 }
 \value{
 A list of dataframes, each representing a parameter in the Ambr audit data
