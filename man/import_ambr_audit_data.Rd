@@ -21,8 +21,6 @@ This function imports Ambr audit data from CSV files in a specified directory
 }
 \examples{
 # Example usage
-\dontrun{
-import_ambr_audit_data(utils::choose.dir(), schema = FALSE)
-}
+#' import_ambr_audit_data("files", schema = FALSE)
 
 }

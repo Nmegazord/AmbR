@@ -8,9 +8,7 @@
 #' @export
 #' @examples
 #' # Example usage
-#' \dontrun{
-#' import_ambr_audit_data(utils::choose.dir(), schema = FALSE)
-#' }
+#' #' import_ambr_audit_data("files", schema = FALSE)
 #'
 
 #' @importFrom rlang .data
