@@ -4,6 +4,7 @@
 #' that represents the number in scientific notation.
 #' @param x The number to convert.
 #' @return A string representing the number in scientific notation.
+#' @export
 #' @examples
 #' scientific_10(10000)
 #'

@@ -7,10 +7,19 @@
 #' @return A list of dataframes, each representing a parameter in the Ambr audit data
 #' @export
 #' @examples
-#' # Example usage
-#' #' import_ambr_audit_data("files", schema = FALSE)
+#' ## Simulate some example data
+#' example_data <- data.frame(
+#'   Name = c("INOCULATED", "VALUE_1", "VALUE_2"),
+#'   Value = c("Yes", "1.2", "2.3"),
+#'   Filename = c("file1.csv", "file1.csv", "file1.csv")
+#' )
+#' ## Write it to a temporary file
+#' example_file <- tempfile(fileext = ".csv")
+#' write.csv(example_data, example_file, row.names = FALSE)
 #'
-
+#' ## Now you can use the example file with your function
+#' import_ambr_audit_data(path = tempdir())
+#'
 #' @importFrom rlang .data
 #' @export
 import_ambr_audit_data <- function(path, schema = FALSE, discard_non_inoculated = TRUE) {
@@ -67,10 +76,10 @@ import_ambr_audit_data <- function(path, schema = FALSE, discard_non_inoculated 
   # then removes the 'Filename' column
   df <- df |>
     dplyr::mutate(
-      culture_station = as.factor(stringr::str_extract(Filename, "(CS\\d+)")),
-      vessel_number = as.factor(stringr::str_extract(Filename, "_([\\d]+)") |> stringr::str_replace_all("_", ""))
+      culture_station = as.factor(stringr::str_extract(.data$Filename, "(CS\\d+)")),
+      vessel_number = as.factor(stringr::str_extract(.data$Filename, "_([\\d]+)") |> stringr::str_replace_all("_", ""))
     ) |>
-    dplyr::select(-Filename)
+    dplyr::select(-.data$Filename)
 
   # Prints a message indicating that the data is being cleaned
   message("Cleaning data...")

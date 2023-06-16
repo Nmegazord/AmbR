@@ -20,7 +20,17 @@ A list of dataframes, each representing a parameter in the Ambr audit data
 This function imports Ambr audit data from CSV files in a specified directory
 }
 \examples{
-# Example usage
-#' import_ambr_audit_data("files", schema = FALSE)
+## Simulate some example data
+example_data <- data.frame(
+  Name = c("INOCULATED", "VALUE_1", "VALUE_2"),
+  Value = c("Yes", "1.2", "2.3"),
+  Filename = c("file1.csv", "file1.csv", "file1.csv")
+)
+## Write it to a temporary file
+example_file <- tempfile(fileext = ".csv")
+write.csv(example_data, example_file, row.names = FALSE)
+
+## Now you can use the example file with your function
+import_ambr_audit_data(path = tempdir())
 
 }

@@ -4,8 +4,9 @@
 #' and removing leading or trailing underscores and square brackets
 #' @param name The original sheet name
 #' @return The sanitized sheet name
+#' @export
 #' @examples
-#' sanitize_sheet_name("Sheet [1]")
+#' sanitize_sheet_name("ImproPer[name]")
 #'
 sanitize_sheet_name <- function(name) {
 

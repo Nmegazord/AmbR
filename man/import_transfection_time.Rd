@@ -16,6 +16,17 @@ A dataframe with the cleaned transfection time data
 This function imports and cleans transfection time data from a CSV file
 }
 \examples{
-import_transfection_time()
+## Simulate some example data
+example_data <- data.frame(
+  Name = c("TRANSFECTED", "VALUE_1", "VALUE_2"),
+  Value = c("Yes", "1.2", "2.3"),
+  Filename = c("file1.csv", "file1.csv", "file1.csv")
+)
+## Write it to a temporary file
+example_file <- tempfile(fileext = ".csv")
+write.csv(example_data, example_file, row.names = FALSE)
+
+## Now you can use the example file with your function
+import_transfection_time(path = example_file)
 
 }

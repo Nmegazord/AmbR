@@ -17,6 +17,6 @@ This function cleans up sheet names for Excel by replacing special characters an
 and removing leading or trailing underscores and square brackets
 }
 \examples{
-sanitize_sheet_name("Sheet [1]")
+sanitize_sheet_name("ImproPer[name]")
 
 }
